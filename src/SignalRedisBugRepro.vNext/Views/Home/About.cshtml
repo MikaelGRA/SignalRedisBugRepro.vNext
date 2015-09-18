@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "About";
+}
+<div class="jumbotron">
+   <h1>SignalRedisBugRepro</h1>
+   <p class="lead">The button below will send ~1000000 messages over signalr, then attempt to join a group. The join will fail after 30 seconds.</p>
+   <p>
+      <a id="stress" class="btn btn-primary btn-lg">SendAlotThenJoin</a>
+   </p>
+</div>
+
+@section scripts {
+<script src="~/lib/signalr/jquery.signalr.min.js"></script>
+<script type="text/javascript">
+      var connection = $.hubConnection();
+      var contosoChatHubProxy = connection.createHubProxy('hyperHub');
+      connection.start().done(function () {
+
+         // Wire up Send button to call NewContosoChatMessage on the server.
+         $("#stress").click(function () {
+            contosoChatHubProxy.invoke("SendAlotThenJoin").done(function () {
+               console.log("SendAlotThenJoin completed");
+            }).fail(function () {
+               console.log("SendAlotThenJoin failed");
+            });
+         });
+      });
+
+
+</script>
+}
